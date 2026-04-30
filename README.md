@@ -4,7 +4,7 @@ Before releasing, test your package against real downstream projects.
 
 EcoTrial is a ShipProve release confidence tool for package, framework, SDK, plugin, and CLI maintainers. It temporarily injects a candidate package release into configured downstream repositories, then runs their install, build, typecheck, and test commands to catch compatibility issues before publication.
 
-This repository is in its initial documentation stage. The CLI and GitHub Action are not released yet.
+This repository is under active MVP development. The CLI is not published yet, and the GitHub Action is not released yet.
 
 ## Why EcoTrial?
 
@@ -79,7 +79,7 @@ ecotrial report
 ecotrial reproduce
 ```
 
-These commands are planned and may change before the first release.
+`init`, `doctor`, `list`, and `run` are implemented for the dogfood MVP. `report` and `reproduce` are planned and may change before the first release.
 
 ## Security
 
@@ -90,7 +90,10 @@ Recommended CI defaults:
 - Use least-privilege GitHub Actions permissions, usually `contents: read`.
 - Do not pass secrets to workflows that install or execute downstream project code.
 - Avoid `pull_request_target` for workflows that run package scripts, install scripts, downstream tests, or other attacker-controlled code.
+- Use `actions/checkout` with persisted credentials disabled when running untrusted code.
 - Keep command execution bounded by timeouts and captured output limits.
+
+EcoTrial is not a sandbox. It uses a sanitized child-process environment and best-effort log redaction, but downstream install scripts and test commands are still code execution. `execution.installScripts` defaults to `true` for real consumer fidelity. Set it to `false` for security-sensitive runs where lifecycle scripts should be disabled.
 
 ## Privacy
 

@@ -1,8 +1,15 @@
 import { writeFile } from "node:fs/promises";
 import { loadConfig } from "../config/loadConfig.js";
 import type { EcoTrialConfig } from "../config/schema.js";
+import { runEcoTrial } from "../core/runEcoTrial.js";
+import { renderTerminalReport } from "../report/render.js";
 
-export async function initCommand(path: string): Promise<string> {
+export type CommandResult = {
+  output: string;
+  exitCode: number;
+};
+
+export async function initCommand(path: string): Promise<CommandResult> {
   const template = `candidate:
   packageName: "ecotrial"
   source: "auto-pack"
@@ -27,37 +34,37 @@ projects:
 `;
 
   await writeFile(path, template, { flag: "wx" });
-  return `Created ${path}`;
+  return { output: `Created ${path}`, exitCode: 0 };
 }
 
-export async function doctorCommand(path: string): Promise<string> {
+export async function doctorCommand(path: string): Promise<CommandResult> {
   const config = await loadConfig(path);
   const warnings = collectWarnings(config);
   const lines = [`EcoTrial config OK: ${path}`, `Projects: ${config.projects.length}`];
   if (warnings.length > 0) {
     lines.push("Warnings:", ...warnings.map((warning) => `- ${warning}`));
   }
-  return lines.join("\n");
+  return { output: lines.join("\n"), exitCode: 0 };
 }
 
-export async function listCommand(path: string): Promise<string> {
+export async function listCommand(path: string): Promise<CommandResult> {
   const config = await loadConfig(path);
-  return config.projects
+  const output = config.projects
     .map((project) => {
       const source = project.localPath ? `local:${project.localPath}` : `repo:${project.repo}`;
       return `${project.name}\t${project.packageManager}\t${source}`;
     })
     .join("\n");
+  return { output, exitCode: 0 };
 }
 
-export async function runCommand(path: string): Promise<string> {
+export async function runCommand(path: string, jsonPath?: string): Promise<CommandResult> {
   const config = await loadConfig(path);
-  return [
-    "EcoTrial run is not implemented yet.",
-    `Config: ${path}`,
-    `Candidate: ${config.candidate.packageName}`,
-    `Projects: ${config.projects.length}`
-  ].join("\n");
+  const report = await runEcoTrial(config, { configPath: path, jsonPath });
+  return {
+    output: renderTerminalReport(report),
+    exitCode: report.status === "passed" ? 0 : 1
+  };
 }
 
 export function helpText(): string {
