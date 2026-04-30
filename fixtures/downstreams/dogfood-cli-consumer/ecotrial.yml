@@ -1,0 +1,20 @@
+candidate:
+  packageName: "ecotrial"
+  source: "fixture.tgz"
+
+execution:
+  timeoutMinutes: 1
+  totalTimeoutMinutes: 1
+  keepWorkdir: false
+  installScripts: false
+
+projects:
+  - name: "nested-placeholder"
+    localPath: "."
+    packageManager: "npm"
+    override:
+      strategy: "package-json-rewrite"
+    install: "npm install --package-lock=false"
+    commands:
+      - name: "noop"
+        run: "node -e \"console.log('nested placeholder')\""
