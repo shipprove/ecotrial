@@ -13,20 +13,17 @@ async function main(argv: string[]): Promise<number> {
       return 0;
     }
     if (command === "init") {
-      console.log(await initCommand(configPath));
-      return 0;
+      return printResult(await initCommand(configPath));
     }
     if (command === "doctor") {
-      console.log(await doctorCommand(configPath));
-      return 0;
+      return printResult(await doctorCommand(configPath));
     }
     if (command === "list") {
-      console.log(await listCommand(configPath));
-      return 0;
+      return printResult(await listCommand(configPath));
     }
     if (command === "run") {
-      console.log(await runCommand(configPath));
-      return 0;
+      const jsonPath = typeof flags.get("json") === "string" ? String(flags.get("json")) : undefined;
+      return printResult(await runCommand(configPath, jsonPath));
     }
 
     console.error(`Unknown command: ${command}`);
@@ -40,6 +37,13 @@ async function main(argv: string[]): Promise<number> {
     console.error(error instanceof Error ? error.message : String(error));
     return 1;
   }
+}
+
+function printResult(result: { output: string; exitCode: number }): number {
+  if (result.output) {
+    console.log(result.output);
+  }
+  return result.exitCode;
 }
 
 main(process.argv.slice(2)).then((code) => {
