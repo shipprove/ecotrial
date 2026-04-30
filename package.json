@@ -14,6 +14,7 @@
   ],
   "scripts": {
     "build": "tsc -p tsconfig.json",
+    "dogfood": "pnpm build && node dist/cli/index.js run --config ecotrial.yml --json .ecotrial/report.json",
     "test": "vitest run",
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },

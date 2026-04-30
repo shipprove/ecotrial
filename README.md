@@ -81,6 +81,17 @@ ecotrial reproduce
 
 `init`, `doctor`, `list`, and `run` are implemented for the dogfood MVP. `report` and `reproduce` are planned and may change before the first release.
 
+## Dogfooding
+
+This repository can dogfood EcoTrial locally:
+
+```bash
+pnpm install
+pnpm dogfood
+```
+
+`pnpm dogfood` builds the CLI, packs this package with `npm pack`, injects the tarball into `fixtures/downstreams/dogfood-cli-consumer`, installs that fixture, and runs `ecotrial --help` plus `ecotrial doctor` through the injected candidate.
+
 ## Security
 
 EcoTrial executes commands from downstream repositories. Only run it against projects you trust, or use isolated runners.

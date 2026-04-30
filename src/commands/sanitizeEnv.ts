@@ -25,7 +25,7 @@ export function sanitizeEnv(env: NodeJS.ProcessEnv = process.env): NodeJS.Proces
     if (SECRET_NAME_PATTERN.test(key)) {
       continue;
     }
-    if (PASS_ENV.has(key) || key.startsWith("npm_") || key.startsWith("pnpm_")) {
+    if (PASS_ENV.has(key)) {
       sanitized[key] = value;
     }
   }

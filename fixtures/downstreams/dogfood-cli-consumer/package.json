@@ -1,0 +1,9 @@
+{
+  "name": "ecotrial-dogfood-cli-consumer",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "ecotrial": "0.0.0"
+  }
+}

@@ -1,12 +1,13 @@
 import { mkdtemp, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
-import { join } from "node:path";
+import { dirname, join } from "node:path";
 import type { EcoTrialConfig, EcoTrialProjectConfig } from "../config/schema.js";
 import { copyCandidateIntoProject, resolveCandidate } from "../candidate/resolveCandidate.js";
 import { applyPackageJsonRewrite } from "../override/packageJsonRewrite.js";
 import { prepareLocalProject } from "../project/prepareProject.js";
 import { runShellCommand } from "../commands/runShellCommand.js";
 import { findRepoRoot } from "../utils/repoRoot.js";
+import { ensureDir } from "../utils/fs.js";
 import { enforceJsonReportSize } from "../report/render.js";
 import type { DiagnosticCode, Finding, JsonReport, ProjectResult, RunStep } from "../report/types.js";
 
@@ -73,6 +74,7 @@ export async function runEcoTrial(config: EcoTrialConfig, options: RunOptions): 
   );
 
   if (options.jsonPath) {
+    await ensureDir(dirname(options.jsonPath));
     await writeFile(options.jsonPath, `${JSON.stringify(report, null, 2)}\n`);
   }
   return report;

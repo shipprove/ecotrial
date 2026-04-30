@@ -1,0 +1,27 @@
+candidate:
+  packageName: "ecotrial"
+  source: "auto-pack"
+  packageRoot: "."
+
+execution:
+  timeoutMinutes: 2
+  totalTimeoutMinutes: 5
+  keepWorkdir: false
+  installScripts: false
+  maxProjects: 5
+  maxOutputBytes: 204800
+  maxJsonReportBytes: 262144
+  maxLocalWorkspaceBytes: 52428800
+
+projects:
+  - name: "dogfood-cli-consumer"
+    localPath: "fixtures/downstreams/dogfood-cli-consumer"
+    packageManager: "npm"
+    override:
+      strategy: "package-json-rewrite"
+    install: "npm install --package-lock=false"
+    commands:
+      - name: "help"
+        run: "npx ecotrial --help"
+      - name: "doctor"
+        run: "npx ecotrial doctor --config ecotrial.yml"
